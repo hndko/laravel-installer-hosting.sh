@@ -15,17 +15,35 @@ pause() {
 clone_repo() {
   echo ""
   read -p "Masukkan URL GitHub repo: " REPO_URL
+
+  TEMP_DIR=".tmp_repo_clone"
+
+  if [ -d "$TEMP_DIR" ]; then
+    rm -rf "$TEMP_DIR"
+  fi
+
   echo ""
-  echo "Cloning repository ke directory saat ini..."
-  git clone "$REPO_URL" .
+  echo "▶ Cloning repository ke folder sementara..."
+  git clone "$REPO_URL" "$TEMP_DIR"
+
   if [ $? -ne 0 ]; then
     echo "❌ Gagal clone repository"
     pause
     return
   fi
-  echo "✅ Repository berhasil di-clone"
+
+  echo "▶ Memindahkan file ke directory saat ini..."
+
+  shopt -s dotglob
+  mv "$TEMP_DIR"/* .
+  shopt -u dotglob
+
+  rm -rf "$TEMP_DIR"
+
+  echo "✅ Repository berhasil di-clone ke directory aktif"
   pause
 }
+
 
 install_laravel_menu() {
   echo ""
