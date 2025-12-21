@@ -12,37 +12,6 @@ pause() {
   read -p "Tekan ENTER untuk lanjut..."
 }
 
-clone_repo() {
-  echo ""
-  read -p "Masukkan URL GitHub repo: " REPO_URL
-
-  TEMP_DIR=".tmp_repo_clone"
-
-  if [ -d "$TEMP_DIR" ]; then
-    rm -rf "$TEMP_DIR"
-  fi
-
-  echo ""
-  echo "▶ Cloning repository ke folder sementara..."
-  git clone "$REPO_URL" "$TEMP_DIR"
-
-  if [ $? -ne 0 ]; then
-    echo "❌ Gagal clone repository"
-    pause
-    return
-  fi
-
-  echo "▶ Memindahkan file ke directory saat ini..."
-
-  shopt -s dotglob
-  mv "$TEMP_DIR"/* .
-  shopt -u dotglob
-
-  rm -rf "$TEMP_DIR"
-
-  echo "✅ Repository berhasil di-clone ke directory aktif"
-  pause
-}
 
 
 install_laravel_menu() {
@@ -150,27 +119,113 @@ migrate_menu() {
   pause
 }
 
+storage_link() {
+  echo ""
+  echo "▶ Membuat symbolic link storage..."
+  php artisan storage:link
+  echo "✅ Storage link berhasil dibuat"
+  pause
+}
+
+rebuild_vite() {
+  echo ""
+  echo "▶ Rebuild assets dengan Vite..."
+  npm install
+  npm run build
+  echo "✅ Vite rebuild selesai"
+  pause
+}
+
+maintenance_mode() {
+  echo ""
+  echo "Maintenance Mode:"
+  echo "1. Aktifkan Maintenance Mode (down)"
+  echo "2. Nonaktifkan Maintenance Mode (up)"
+  echo "0. Kembali"
+  echo ""
+  read -p "Pilihan: " MAINT_CHOICE
+
+  case $MAINT_CHOICE in
+    1)
+      echo "▶ Mengaktifkan maintenance mode..."
+      php artisan down
+      echo "✅ Maintenance mode aktif"
+      ;;
+    2)
+      echo "▶ Menonaktifkan maintenance mode..."
+      php artisan up
+      echo "✅ Maintenance mode nonaktif"
+      ;;
+    0)
+      return
+      ;;
+    *)
+      echo "❌ Pilihan tidak valid"
+      ;;
+  esac
+  pause
+}
+
+clear_cache_menu() {
+  echo ""
+  echo "Clear Cache:"
+  echo "1. Optimize Clear (php artisan optimize:clear)"
+  echo "2. Manual Clear (config, route, view, cache)"
+  echo "0. Kembali"
+  echo ""
+  read -p "Pilihan: " CACHE_CHOICE
+
+  case $CACHE_CHOICE in
+    1)
+      echo "▶ Menjalankan optimize:clear..."
+      php artisan optimize:clear
+      echo "✅ Optimize clear selesai"
+      ;;
+    2)
+      echo "▶ Menjalankan clear cache manual..."
+      php artisan config:clear
+      php artisan route:clear
+      php artisan view:clear
+      php artisan cache:clear
+      echo "✅ Manual clear cache selesai"
+      ;;
+    0)
+      return
+      ;;
+    *)
+      echo "❌ Pilihan tidak valid"
+      ;;
+  esac
+  pause
+}
+
 while true; do
   clear
   echo "======================================"
   echo " Laravel SSH Installer Menu"
   echo " Directory: $PROJECT_DIR"
   echo "======================================"
-  echo "1. Clone GitHub Repository"
-  echo "2. Install & Setup Laravel"
-  echo "3. Setup .htaccess (redirect public)"
-  echo "4. Setup Database (.env)"
-  echo "5. Migrate Database"
+  echo "1. Install & Setup Laravel"
+  echo "2. Setup .htaccess (redirect public)"
+  echo "3. Setup Database (.env)"
+  echo "4. Migrate Database"
+  echo "5. Storage Link"
+  echo "6. Rebuild Vite"
+  echo "7. Maintenance Mode"
+  echo "8. Clear Cache"
   echo "0. Exit"
   echo ""
   read -p "Pilih menu: " MENU
 
   case $MENU in
-    1) clone_repo ;;
-    2) install_laravel_menu ;;
-    3) setup_htaccess ;;
-    4) setup_env_database ;;
-    5) migrate_menu ;;
+    1) install_laravel_menu ;;
+    2) setup_htaccess ;;
+    3) setup_env_database ;;
+    4) migrate_menu ;;
+    5) storage_link ;;
+    6) rebuild_vite ;;
+    7) maintenance_mode ;;
+    8) clear_cache_menu ;;
     0)
       echo "👋 Keluar..."
       exit 0
