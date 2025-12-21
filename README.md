@@ -29,14 +29,14 @@ A simple yet powerful CLI tool to automate common Laravel deployment tasks direc
 ### Option 1: Direct Run
 
 ```bash
-curl -sL https://raw.githubusercontent.com/YOUR_USERNAME/laravel-installer-hosting.sh/main/laravel-installer.sh | bash
+curl -sL https://raw.githubusercontent.com/hndko/laravel-installer-hosting.sh/main/laravel-installer.sh | bash
 ```
 
 ### Option 2: Download & Run
 
 ```bash
 # Download the script
-wget https://raw.githubusercontent.com/YOUR_USERNAME/laravel-installer-hosting.sh/main/laravel-installer.sh
+wget https://raw.githubusercontent.com/hndko/laravel-installer-hosting.sh/main/laravel-installer.sh
 
 # Make it executable
 chmod +x laravel-installer.sh
